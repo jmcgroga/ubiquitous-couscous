@@ -1,0 +1,12 @@
+{
+    "name": "AggrEdit",
+    "version": "0.0.1",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "devDependencies": {
+        "electron": "1.7.10",
+        "uuid": "3.2.1"
+    }
+}

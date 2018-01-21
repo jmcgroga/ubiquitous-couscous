@@ -1,0 +1,4 @@
+node_modules/
+documents/
+package-lock.json
+*.sav
