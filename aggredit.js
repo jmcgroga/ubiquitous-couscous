@@ -1,3 +1,9 @@
+function isElectron() {
+    return process && process.versions && (process.versions['electron'] !== undefined);
+}
+
+var electronDocument = isElectron() ? require('./document') : null;
+var uuidv4 = isElectron() ? require('uuid/v4') : null;
 
 class AggrEdit {
     constructor() {
@@ -25,11 +31,6 @@ class AggrEdit {
 
         this.editorIds = null;
 
-        this.electronDocument = this.isElectron() ? require('./document') : null;
-    }
-
-    isElectron() {
-        return process && process.versions && (process.versions['electron'] !== undefined);
     }
 
     loadPlugin(jsFile) {
@@ -126,8 +127,8 @@ class AggrEdit {
     }
 
     load() {
-        if (this.electronDocument) {
-            var electronDoc = new this.electronDocument.Document(this.document);
+        if (electronDocument) {
+            var electronDoc = new electronDocument.Document(this.document);
             $j.each(electronDoc.load(), function(i, val) {
                 var config = this.getEditorCommandConfig(val.command);
                 this._addQuill(val.id, config, val.contents);
@@ -150,8 +151,8 @@ class AggrEdit {
             document: this.document,
             items: []
         };
-        if (this.electronDocument) {
-            var electronDoc = new this.electronDocument.Document(this.document);
+        if (electronDocument) {
+            var electronDoc = new electronDocument.Document(this.document);
             var promises = [];
             $j.each(this.quills, function(i, val) {
                 promises.push(electronDoc.add(val.id,
@@ -212,7 +213,7 @@ class AggrEdit {
         return new Promise((resolve, reject) => {
             var config = this.getEditorCommandConfig(command);
 
-            if (this.isElectron()) {
+            if (isElectron()) {
                 var editorId = uuidv4();
                 this._addQuill(editorId, config, null, commandObj);
                 resolve();
