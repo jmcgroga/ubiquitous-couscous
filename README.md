@@ -7,7 +7,7 @@ npm install
 ```
 
 ```
-mkdir documents
+mkdir -p documents/documents
 ```
 
 ```
