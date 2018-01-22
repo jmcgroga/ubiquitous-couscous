@@ -33,6 +33,47 @@ class AggrEdit {
 
     }
 
+    updateDocumentList() {
+        var doclist;
+        if (electronDocument) {
+            doclist = electronDocument.documentList();
+        }
+
+        if (doclist) {
+            $j("#documentlist").empty();
+            $j.each(doclist, function(i, val) {
+                var item = $j(document.createElement('li')),
+                    a =  $j(document.createElement('a'));
+                item.attr({
+                    class: 'nav-item'
+                });
+
+                a.attr({
+                    class: "nav-link",
+                    href: "#"
+                });
+
+                item.droppable({
+                    drop: function(event, ui) {
+                        alert('Dropped');
+                    }
+                });
+
+                a.html(val)
+                    .click(function() {
+                        this.save()
+                            .then(function() {
+                                this.document = val;
+                                this.load();
+                            }.bind(this));
+                    }.bind(this));
+                item.append(a);
+                $j("#documentlist").append(item);
+                $j("#documenttitle").html(this.document);
+            }.bind(this));
+        }
+    }
+
     loadPlugin(jsFile) {
         return new Promise((resolve, reject) => {
             $j.getScript(jsFile)
@@ -128,15 +169,24 @@ class AggrEdit {
 
     load() {
         if (electronDocument) {
-            var electronDoc = new electronDocument.Document(this.document);
-            $j.each(electronDoc.load(), function(i, val) {
-                var config = this.getEditorCommandConfig(val.command);
-                this._addQuill(val.id, config, val.contents);
-            }.bind(this));
+            var electronDoc = new electronDocument.Document(this.document),
+                editors = electronDoc.load();
+            $j("#documenttitle").html(this.document);
+            this.removeAll();
+            if (editors.length == 0) {
+                this.createQuill('text');
+            } else {
+                $j.each(editors, function(i, val) {
+                    var config = this.getEditorCommandConfig(val.command);
+                    this._addQuill(val.id, config, val.contents, null, true);
+                }.bind(this));
+                $j('html, body').animate({scrollTop:$j(document).height()}, 'slow');
+            }
         } else {
             $j.getJSON(this.documentsAPI + "/" + this.document, function(data) {
                 if (!$j.isEmptyObject(data)) {
                     this.removeAll();
+                    $j("#documenttitle").html(this.document);
                     $j.each(data.items, function(i, val) {
                         var config = this.getEditorCommandConfig(val.command);
                         this._addQuill(val.id, config, val.contents);
@@ -159,18 +209,21 @@ class AggrEdit {
                                               val.command,
                                               val.quill.getContents().ops));
             }.bind(this));
-            Promise.all(promises)
+            return Promise.all(promises)
                 .then(function() {
                     return electronDoc.save();
                 })
                 .then(function() {
-                    alert("The file has been succesfully saved");
-                })
+                    $j('#savesuccess').show();
+                    this.updateDocumentList();
+                }.bind(this))
                 .catch(function(err) {
-                    alert("An error ocurred updating the file" + err.message);
+                    $j("#savefailmessage").html("An error occurred updating the file: " + err.message);
+                    $j("#savefail").show();
                     console.log(err);
                 });
         } else {
+            /* TODO: Add a Promise here! */
             $j.each(this.quills, function(i, val) {
                 saveObj.items.push({
                     id: val.id,
@@ -252,7 +305,7 @@ class AggrEdit {
         });
     }
 
-    _addQuill(editorId, config, contents, commandObj) {
+    _addQuill(editorId, config, contents, commandObj, deferScroll) {
         var editorContainer,
             editorControl,
             nextEditorId,
@@ -268,6 +321,7 @@ class AggrEdit {
 
         even = this.quills.length % 2 == 0;
         syntax = (config.syntax === undefined) ? false : config.syntax;
+        deferScroll = (deferScroll === undefined) ? false : deferScroll;
 
         // Create the editor container
         nextEditorId = 'editor_' + editorId,
@@ -276,6 +330,7 @@ class AggrEdit {
         editorContainer.attr({
             id: nextEditorId
         });
+        editorContainer.addClass('editor-container');
 
         $j('#editor').append(editorContainer);
 
@@ -320,7 +375,8 @@ class AggrEdit {
 
         // Set the Quill editor to draggable, but do not make it draggable until the handle is entered
         editorContainer.draggable({
-            containment: $j('#editor'), //'document',
+//            containment: 'document', //$j('#editor'), //'document',
+//            cursor: 'move',
             revert: true,
             disabled: true
         });
@@ -355,7 +411,9 @@ class AggrEdit {
         quill.focus();
 
         // Scroll after the Quill editor is added
-        $j('html, body').animate({scrollTop:$j(document).height()}, 'slow');
+        if (!deferScroll) {
+            $j('html, body').animate({scrollTop:$j(document).height()}, 'slow');
+        }
     }
 }
 

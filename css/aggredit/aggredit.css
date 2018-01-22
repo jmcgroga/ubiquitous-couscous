@@ -57,6 +57,9 @@
     font-size: 13px;
 }
 
+.editor-container {
+}
+
 .handle {
     height: 100%;
     width: 5px;
@@ -86,4 +89,11 @@ ul.command-list > li {
     float:left;
     display:inline;
     width: 50%;
+}
+
+.alert.alert-save {
+    position: fixed;
+    width: 100%;
+    z-index: 10000;
+    display: none;
 }
