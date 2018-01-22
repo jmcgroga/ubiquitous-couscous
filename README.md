@@ -7,5 +7,10 @@ npm install
 ```
 
 ```
+mkdir documents
+```
+
+```
 npx electron .
 ```
+
