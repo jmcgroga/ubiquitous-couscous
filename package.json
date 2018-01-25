@@ -6,7 +6,7 @@
         "start": "electron ."
     },
     "devDependencies": {
-        "electron": "1.7.10",
+        "electron": "1.7.11",
         "uuid": "3.2.1"
     }
 }
