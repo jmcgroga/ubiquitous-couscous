@@ -140,7 +140,7 @@ class AggrEdit {
                 } else {
                     $j('#command').val('Invalid command: ' + commandStr);
                 }
-                
+
                 if (this.focused) {
                   this.quillsByName[this.focused].focus();
                 }
@@ -203,12 +203,18 @@ class AggrEdit {
         };
         if (electronDocument) {
             var electronDoc = new electronDocument.Document(this.document);
-            var promises = [];
-            $j.each(this.quills, function(i, val) {
-                promises.push(electronDoc.add(val.id,
-                                              val.command,
-                                              val.quill.getContents().ops));
-            }.bind(this));
+            var promises = [],
+                me = this;
+
+            $j('#editor').children().each(function(index) {
+                var val = me.quillsByName[$j(this).attr('id')];
+                if (val) {
+                    promises.push(electronDoc.add(val.id,
+                                                  val.command,
+                                                  val.quill.getContents().ops));
+                }
+            })
+
             return Promise.all(promises)
                 .then(function() {
                     return electronDoc.save();
@@ -296,12 +302,20 @@ class AggrEdit {
                         }
 
                         this.editorIds.reverse();
-                        
+
                         var editorId = this.editorIds.pop();
                         this._addQuill(editorId, config, null, commandObj);
                         resolve();
                     }.bind(this));
             }
+        });
+    }
+
+    refreshHandles() {
+        $j(".handle").each(function(index) {
+            var handle = $j(this);
+            handle.removeClass('even-handle').removeClass('odd-handle');
+            handle.addClass((index % 2 == 0) ? 'even-handle' : 'odd-handle');
         });
     }
 
@@ -312,7 +326,8 @@ class AggrEdit {
             handle,
             even,
             quill,
-            syntax;
+            syntax,
+            quillObj;
 
         if ((config === undefined) || (config == null) ||
             (editorId === undefined) || (editorId == null)) {
@@ -324,9 +339,9 @@ class AggrEdit {
         deferScroll = (deferScroll === undefined) ? false : deferScroll;
 
         // Create the editor container
-        nextEditorId = 'editor_' + editorId,
+        nextEditorId = editorId;
 
-        editorContainer = $j(document.createElement('div'));
+        editorContainer = $j(document.createElement('li'));
         editorContainer.attr({
             id: nextEditorId
         });
@@ -374,23 +389,26 @@ class AggrEdit {
         editorContainer.append(handle);
 
         // Set the Quill editor to draggable, but do not make it draggable until the handle is entered
-        editorContainer.draggable({
+        $j('#editor').sortable({
 //            containment: 'document', //$j('#editor'), //'document',
 //            cursor: 'move',
-            revert: true,
-            disabled: true
+//            revert: true,
+            disabled: true,
+            stop: function(event, ui) {
+                this.refreshHandles();
+            }.bind(this)
         });
 
         // Enable dragging for the Quill editor
         handle.mouseenter(function() {
-            editorContainer.draggable( "option", "disabled", false );
+            $j('#editor').sortable( "option", "disabled", false );
         });
 
         // Disable dragging for the Quill editor
         handle.mouseout(function() {
-            editorContainer.draggable( "option", "disabled", true );
+            $j('#editor').sortable( "option", "disabled", true );
         });
-        
+
         // Disable ALT-x keybinding in Quill editor (allow ALT-x to open command window)
         quill.keyboard.addBinding({
             key: 'x',
@@ -399,11 +417,12 @@ class AggrEdit {
         });
 
         // Store the Quill object
-        this.quills.push({ quill: quill,
-                           id: editorId,
-                           command: config.command
-                         });
-        this.quillsByName[nextEditorId] = quill;
+        quillObj = { quill: quill,
+                     id: editorId,
+                     command: config.command
+                   };
+        this.quills.push(quillObj);
+        this.quillsByName[nextEditorId] = quillObj;
         this.currentQuill = quill;
 
         // Focus the Quill editor
