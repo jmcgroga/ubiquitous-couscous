@@ -54,6 +54,7 @@ class AggrEdit {
                 });
 
                 item.droppable({
+                    tolerance: 'pointer',
                     drop: function(event, ui) {
                         alert('Dropped');
                     }
