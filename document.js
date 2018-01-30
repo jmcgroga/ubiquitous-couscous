@@ -37,6 +37,31 @@ class Document {
         this.docids = []
     }
 
+    remove(id) {
+        var index = this.docids.indexOf(id);
+
+        if (index >= 0) {
+            this.docids.splice( index, 1 );
+            return this.save();
+        }
+
+        return Promise.resolve();
+    }
+
+    moveTo(id, doc) {
+        var index = this.docids.indexOf(id);
+
+        if (index >= 0) {
+            return this.remove(id)
+                .then(function() {
+                    doc.docids.push(id);
+                    return doc.save();
+                });
+        }
+
+        return Promise.resolve();
+    }
+
     add(id, command, contents) {
         this.docids.push(id)
 

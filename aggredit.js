@@ -34,7 +34,8 @@ class AggrEdit {
     }
 
     updateDocumentList() {
-        var doclist;
+        var doclist,
+            me = this;
         if (electronDocument) {
             doclist = electronDocument.documentList();
         }
@@ -56,7 +57,14 @@ class AggrEdit {
                 item.droppable({
                     tolerance: 'pointer',
                     drop: function(event, ui) {
-                        alert('Dropped');
+                        var id = ui.draggable.context.id,
+                            targetDocName = $j(this).first().text();
+                        me.moveTo(id, targetDocName)
+                            .then(function() {
+                                ui.draggable.remove();
+                                $j('#movesuccess').show();
+                                me.refreshHandles();
+                            });
                     }
                 });
 
@@ -143,7 +151,7 @@ class AggrEdit {
                 }
 
                 if (this.focused) {
-                  this.quillsByName[this.focused].focus();
+                  this.quillsByName[this.focused].quill.focus();
                 }
                 return false;
             }
@@ -194,6 +202,23 @@ class AggrEdit {
                     }.bind(this));
                 }
             }.bind(this));
+        }
+    }
+
+    moveTo(id, document) {
+        if (electronDocument) {
+            var targetDoc = new electronDocument.Document(document),
+                sourceDoc = new electronDocument.Document(this.document);
+
+            return Promise.all([targetDoc.load(),
+                                sourceDoc.load()])
+                .then(function() {
+                    this.focused = null;
+                    return this.save();
+                }.bind(this))
+                .then(function() {
+                    return sourceDoc.moveTo(id, targetDoc);
+                });
         }
     }
 
