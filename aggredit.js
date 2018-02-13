@@ -131,7 +131,7 @@ class AggrEdit {
 
                 if (commandObj.isCommand) {
                     $j('#command').val('');
-                    $j('#footer').hide();
+                    $j('footer').hide();
                     switch (command) {
                     case 'save':
                         this.save();
@@ -159,7 +159,7 @@ class AggrEdit {
 
         $j(document).on('keyup', function(e) {
             if (e.altKey && (e.which == 88)) {
-                $j('#footer').show();
+                $j('footer').css('display', 'flex');
                 $j('#command').val('');
                 this.focused = $j(':focus').parent().attr('id');
                 $j('#command').focus();

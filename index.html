@@ -1,104 +1,49 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <title></title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AggrEdit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <link href="./css/quill/quill.jrm.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/latest/quill.min.js"></script>
+    <link href="./css/aggredit/aggredit.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <link href="./css/quill/quill.jrm.css" rel="stylesheet">
-  <script src="https://cdn.quilljs.com/latest/quill.min.js"></script>
-  <link href="./css/aggredit/aggredit.css" rel="stylesheet">
-
-  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-  <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
-  <script>if (window.module) module = window.module;</script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
-
-  <script>
-    var $j = jQuery.noConflict();
-  </script>
-  <script src="./aggredit.js"></script>
-</head>
-<body>
-  <div id="movesuccess" class="alert alert-success alert-dismissable alert-save fade show">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <strong>Success!</strong> Moved successfully!
-  </div>
-  <div id="savesuccess" class="alert alert-success alert-dismissable alert-save fade show">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <strong>Success!</strong> Saved successfully!
-  </div>
-  <div id="savefail" class="alert alert-danger alert-dismissable alert-save fade show">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <strong>Failed!</strong> <span id="savefailmessage">Unable to save document!</span>
-  </div>
-  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a id="documenttitle" class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Home</a>
-    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-  </nav>
-  <div class="container-fluid">
-    <div class="row">
-      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-        <div class="sidebar-sticky">
-          <ul id="documentlist" class="nav flex-column">
-          </ul>
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"></link>
+    <script>if (window.module) module = window.module;</script>
+    <script>
+      var $j = jQuery.noConflict();
+    </script>
+    <script src="./aggredit.js"></script>
+  </head>
+  <body>
+    <header>
+      <div id="documenttitle">
+        Document Title Here
+      </div>
+      <div class="searchcontainer">
+        <input id="search" type="text" name="search" class="rounded"/>
+      </div>
+    </header>
+    <main>
+      <aside>
+        <div id="create">
+          <input id="doctoadd" class="rounded" type="text" name="search"/>
+          <div id="adddocbutton">&#x2795;</div>
         </div>
-      </nav>
-
-      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-        <input id="document" name="document" type="hidden" value="Home"></input>
-        <div id="instructions">
-          <div class="card">
-            <div class="card-header">
-              <a class="card-link" data-toggle="collapse" data-parent="#instructions" href="#collapseInstructions">Instructions</a>
-            </div>
-            <div id="collapseInstructions" class="collapse show">
-              <div class="card-body">
-                <p>This is a proof of concept for an editor that will create multiple documents on a single page.</p>
-                <p>It is based on <a href="https://quilljs.com">Quill</a> and inspired (somewhat) by <a href="https://www.gnu.org/software/emacs/">Emacs</a>.</p>
-                <p>When the page loads, an initial Quill document is created for text input</p>
-                <p>To create a new document, add the document name after /editor/ in the URL.  (Will change when commands become more mature)</p>
-                <p>The following commands are available:</p>
-                <ul class="command-list">
-                  <li><span class="command">text</span> - Create a Plain Text editor</li>
-                  <li><span class="command">requirements</span> - Create a Plain Text editor and default to bullet list</li>
-                  <li><span class="command">python</span> - Create a Python editor</li>
-                  <li><span class="command">javascript</span> - Create a Javascript editor</li>
-                  <li><span class="command">c++</span> - Create a C++ editor</li>
-                  <li><span class="command">html</span> - Create a HTML editor</li>
-                  <li><span class="command">xml</span> - Create a XML editor</li>
-                  <li><span class="command">&nbsp;</span></li>
-                  <li><span class="command">help</span> - Show this info</li>
-                  <li><span class="command">hidehelp</span> - Hide this info</li>
-                  <li><span class="command">save</span> - Save current document (ie all Quill editors)</li>
-                  <li><span class="command">load</span> - Load current document</li>
-                </ul>
-                <p>There are a bunch of problems (eg items are draggable, but shouldn't be yet).</p>
-                <p>The idea is to jot down ideas or copy code quickly, then review the documents and organize them by dragging them someplace that makes more sense (eg another document for a project or something like that.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="header">
-        </div>
-
+        <ul id="documentlist">
+        </ul>
+      </aside>
+      <section class="content">
         <ul id="editor">
         </ul>
-
-        <div id="footer">
-          <input id="command" class="full-width" value="Your Command Here"></input>
-        </div>
-
-        <script src="./initAggrEdit.js"></script>
-      </main>
-    </div>
-  </div>
-</body>
+      </section>
+    </main>
+    <footer>
+      <input id="command" value="Your Command Here"></input>
+    </footer>
+    <script src="./initAggrEdit.js"></script>
+  </body>
 </html>

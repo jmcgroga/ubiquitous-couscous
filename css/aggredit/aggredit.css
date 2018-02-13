@@ -1,60 +1,134 @@
-#header {
-    background: white;
-    border: 1px solid black;
-    padding: 5px 5px 5px 5px;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 13px;
-    position:fixed;
-    top:0px;
-    width:100%;
-    z-index: 1000;
-    display: none;
+html,
+body {
+    height: 100%;
 }
 
-#footer {
-    position:fixed;
-    left:0px;
-    bottom:0px;
-    height:30px;
-    width:100%;
-    z-index: 1000;
+body {
+    display: flex;
+    flex-direction: column;
+/*    background-color: #fff; */
+    margin: 0;
+    font-family: Century Gothic, sans-serif;
+/*    color: #222; */
+    font-size: 0.9em;
+}
+
+header {
+    display: flex;
+    flex: 0 0 45px;
+    padding: 10px;
+/*
+    color: #fff;
+    background-color: blue;
+*/
+}
+
+main {
+    flex: 1 0 auto;
+    display: flex;
+    /* background-color: green; */
+}
+
+aside {
+    display: flex;
+    flex-direction: column;
+    /* background-color: #f2f2f2; */
+    overflow-y: scroll;
+    width: 25%;
+    min-width: 250px;
+}
+
+.content {
+    display: flex;
+    flex: 1 1 auto; 
+    flex-direction: column;
+    /* background-color: yellow; */
+    overflow-y: scroll;
+}
+
+footer {
     display: none;
+    flex: 0 0 30px;
+    padding: 5px;
+    /* color: #fff;
+    background-color: rgba(61, 100, 158, .9); */
+}
+
+#documentlist {
+    flex: 1 0 1px;
+    overflow-y: scroll;
+    list-style-type: none;
+    padding: 10px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+
+#documentlist li {
+    margin: 3px 3px 8px 8px;
+    font-size: 24px;
 }
 
 #editor {
-    /*    padding-bottom: 40px; */
+    flex: 1 0 1px;
+    list-style-type: none;
+    margin-top: 51px;
+    margin-bottom: 0px;
+    padding: 0px 10px 0px;
+    overflow-y: scroll;
 }
 
-/* IE 6 */
-* html #footer {
-    position:absolute;
-    top:expression((0-(footer.offsetHeight)+(document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight)+(ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop))+'px');
+#create {
+    display:flex;
+    height: 35px;
+    /* background-color: orange; */
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
-.full-width {
+/* BEGIN: Header */
+#documenttitle {
+    display:flex;
+    align-items: center;
+    width: 75%;
+    font-size: 30px
+}
+
+.searchcontainer {
+    display:flex;
+    width: 25%;
+}
+
+#search {
     width: 100%;
-    height: 100%;
-    font-size: 100%;
+    font-size: 16px;
+    margin: 6px 0px 6px 0px;
 }
 
-.even-left-border {
-    border-left: 5px solid lightgray;
+/* END: Header */
+
+/* BEGIN: Add Document */
+#doctoadd {
+    width: 90%;
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 15px;
 }
 
-.odd-left-border {
-    border-left: 5px solid gray;
+#adddocbutton {
+    display:flex;
+    align-items: center;
+    justify-content: space-around;
+    font-family: Century Gothic, sans-serif;
+    width: 10%;
+}
+/* END: Add Document */
+
+input.rounded {
+    border-radius: 20px;
 }
 
-.instructions {
-    padding: 5px 5px 5px 5px;
-    border: 1px solid black;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 13px;
-}
-
-.instructions .command {
-    font-family: Courier;
-    font-size: 13px;
+#command {
+    width: 100%;
+    font-size: 18px;
 }
 
 .editor-container {
@@ -76,24 +150,6 @@
     background: gray;
 }
 
-ul.command-list {
-    /* width:760px; */
-    margin-bottom:20px;
-    overflow:hidden;
-    /* border-top:1px solid #ccc; */
-}
-
-ul.command-list > li {
-    line-height:1.5em;
-    /* border-bottom:1px solid #ccc; */
-    float:left;
-    display:inline;
-    width: 50%;
-}
-
-.alert.alert-save {
-    position: fixed;
-    width: 100%;
-    z-index: 10000;
-    display: none;
+.nav-link:link {
+    text-decoration: none;
 }
