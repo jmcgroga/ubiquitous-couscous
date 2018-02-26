@@ -59,18 +59,27 @@ footer {
     overflow-y: scroll;
     list-style-type: none;
     padding: 10px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+    margin: 40px 0px 0px 0px;
 }
 
 #documentlist li {
-    margin: 3px 3px 8px 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px 0px 0px 12px;
+    min-height: 70px;
     font-size: 24px;
+    border-top: solid;
+    border-top-width: 1px;
+}
+
+.selected-doc {
+    background: #f0f0f0;
 }
 
 #editor {
     flex: 1 0 1px;
     list-style-type: none;
-    margin-top: 51px;
+/*    margin-top: 51px; */
     margin-bottom: 0px;
     padding: 0px 10px 0px;
     overflow-y: scroll;
@@ -89,6 +98,8 @@ footer {
     display:flex;
     align-items: center;
     width: 75%;
+    padding-top: 5px;
+    padding-left: 20px;
     font-size: 30px
 }
 
@@ -152,4 +163,10 @@ input.rounded {
 
 .nav-link:link {
     text-decoration: none;
+}
+
+.display-region {
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow: auto;
 }

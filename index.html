@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>AggrEdit</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
     <link href="./css/quill/quill.jrm.css" rel="stylesheet">
@@ -19,24 +20,15 @@
     <script src="./aggredit.js"></script>
   </head>
   <body>
-    <header>
-      <div id="documenttitle">
-        Document Title Here
-      </div>
-      <div class="searchcontainer">
-        <input id="search" type="text" name="search" class="rounded"/>
-      </div>
-    </header>
     <main>
       <aside>
-        <div id="create">
-          <input id="doctoadd" class="rounded" type="text" name="search"/>
-          <div id="adddocbutton">&#x2795;</div>
-        </div>
         <ul id="documentlist">
         </ul>
       </aside>
       <section class="content">
+        <div id="documenttitle">
+          Document Title Here
+        </div>
         <ul id="editor">
         </ul>
       </section>

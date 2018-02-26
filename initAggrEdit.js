@@ -11,18 +11,22 @@ function initAggrEdit() {
                 $j('#instructions').hide();
             });
             aggrEdit.registerCommand('new', function(editor, commandObj) {
-                var document = commandObj.parameters.trim();
-                aggrEdit.document = document;
-                aggrEdit.load();
+                var title = commandObj.parameters.trim();
+                aggrEdit.save()
+                    .then(function() {
+                        aggrEdit.createNewDocument(title);
+                    })
             });
             aggrEdit.createQuill('text').then(() => {
                 aggrEdit.load();
             });
         });
     aggrEdit.updateDocumentList();
+/*
     setInterval(function() {
         aggrEdit.save();
     }, 30000);
+*/
 }
 
 initAggrEdit();

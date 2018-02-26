@@ -7,6 +7,7 @@ var uuidv4 = isElectron() ? require('uuid/v4') : null;
 
 class AggrEdit {
     constructor() {
+        this.documentHandler = new electronDocument.DocumentHandler()
         this.commands = [
             'save',
             'load'
@@ -25,7 +26,7 @@ class AggrEdit {
 
         this.removeAll();
 
-        this.document = $j('#document').val();
+        this.document = null;
 
         this.configureCommandElement();
 
@@ -33,54 +34,67 @@ class AggrEdit {
 
     }
 
+    createNewDocument(title) {
+        if (title.length > 0) {
+            this.document = this.documentHandler.newDocument(title);
+            this.documentHandler.saveDocuments()
+            this.updateDocumentList()
+        }
+    }
+
+    selectDocument() {
+        $j("#documentlist").children().removeClass('selected-doc');
+        $j('#' + this.document.id).addClass('selected-doc');
+    }
+
     updateDocumentList() {
         var doclist,
             me = this;
-        if (electronDocument) {
-            doclist = electronDocument.documentList();
-        }
+
+        doclist = this.documentHandler.documentContainers;
 
         if (doclist) {
             $j("#documentlist").empty();
             $j.each(doclist, function(i, val) {
-                var item = $j(document.createElement('li')),
-                    a =  $j(document.createElement('a'));
-                item.attr({
-                    class: 'nav-item'
-                });
+                var item = $j(document.createElement('li'));
 
-                a.attr({
-                    class: "nav-link",
-                    href: "#"
+                item.attr({
+                    class: 'nav-item',
+                    id: val.id
+
                 });
 
                 item.droppable({
                     tolerance: 'pointer',
                     drop: function(event, ui) {
                         var id = ui.draggable.context.id,
-                            targetDocName = $j(this).first().text();
-                        me.moveTo(id, targetDocName)
+                            targetDocId = $j(this).attr('id');
+                        me.moveTo(id, targetDocId)
                             .then(function() {
-                                ui.draggable.remove();
-                                $j('#movesuccess').show();
+                                $j('#' + ui.draggable.context.id).remove()
                                 me.refreshHandles();
                             });
                     }
                 });
 
-                a.html(val)
+                item.html(val.title)
                     .click(function() {
                         this.save()
                             .then(function() {
                                 this.document = val;
                                 this.load();
+                                this.selectDocument();
                             }.bind(this));
                     }.bind(this));
-                item.append(a);
+
                 $j("#documentlist").append(item);
-                $j("#documenttitle").html(this.document);
             }.bind(this));
         }
+        if (!this.document) {
+            this.document = doclist[0];
+        }
+        this.load();
+        this.selectDocument();
     }
 
     loadPlugin(jsFile) {
@@ -178,9 +192,9 @@ class AggrEdit {
 
     load() {
         if (electronDocument) {
-            var electronDoc = new electronDocument.Document(this.document),
+            var electronDoc = new electronDocument.Document(this.document.id),
                 editors = electronDoc.load();
-            $j("#documenttitle").html(this.document);
+            $j("#documenttitle").html(this.document.title);
             this.removeAll();
             if (editors.length == 0) {
                 this.createQuill('text');
@@ -208,16 +222,16 @@ class AggrEdit {
     moveTo(id, document) {
         if (electronDocument) {
             var targetDoc = new electronDocument.Document(document),
-                sourceDoc = new electronDocument.Document(this.document);
+                sourceDoc = new electronDocument.Document(this.document.id);
 
             return Promise.all([targetDoc.load(),
-                                sourceDoc.load()])
+                                sourceDoc.save()])
                 .then(function() {
                     this.focused = null;
                     return this.save();
                 }.bind(this))
                 .then(function() {
-                    return sourceDoc.moveTo(id, targetDoc);
+                    return sourceDoc.move(id, targetDoc);
                 });
         }
     }
@@ -228,7 +242,7 @@ class AggrEdit {
             items: []
         };
         if (electronDocument) {
-            var electronDoc = new electronDocument.Document(this.document);
+            var electronDoc = new electronDocument.Document(this.document.id, false);
             var promises = [],
                 me = this;
 
@@ -288,6 +302,21 @@ class AggrEdit {
         };
 
         this.commands.push(command);
+    }
+
+    createDisplayRegion(editorId, topOrBottom) {
+        var regionId = 'display_' + editorId,
+            div = $j(document.createElement('div')),
+            topOrBottom = topOrBottom ? topOrBottom : 'top';
+        div.attr('id', regionId);
+        div.addClass('display-region');
+
+        if (topOrBottom == 'top') {
+            $j('#' + editorId).prepend(div);
+        } else {
+            $j('#' + editorId).append(div);
+        }
+        return div;
     }
 
     getEditorCommandConfig(command) {

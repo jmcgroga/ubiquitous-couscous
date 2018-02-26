@@ -3,10 +3,16 @@
     "version": "0.0.1",
     "main": "main.js",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "test": "mocha"
     },
     "devDependencies": {
+        "chai": "^4.1.2",
         "electron": "1.7.11",
+        "mocha": "^5.0.1",
         "uuid": "3.2.1"
+    },
+    "dependencies": {
+        "lunr": "^2.1.5"
     }
 }
