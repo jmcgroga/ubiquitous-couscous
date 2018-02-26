@@ -22,11 +22,9 @@ function initAggrEdit() {
             });
         });
     aggrEdit.updateDocumentList();
-/*
     setInterval(function() {
         aggrEdit.save();
     }, 30000);
-*/
 }
 
 initAggrEdit();
